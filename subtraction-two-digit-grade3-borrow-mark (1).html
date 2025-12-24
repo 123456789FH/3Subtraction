@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>طرح الأعداد المكوّنة من رقمين (مع الاستلاف وتوضيح التغيير)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap');
+    *{font-family:"Tajawal",system-ui,sans-serif}
+    .card{box-shadow:0 18px 60px rgba(15,23,42,.12)}
+    .box{
+      border-width:4px;border-radius:18px;min-width:84px;min-height:84px;
+      display:flex;align-items:center;justify-content:center;font-weight:800;font-size:44px;background:#fff;
+      transition:all .2s ease;
+    }
+    .box.clickable{cursor:pointer}
+    .crossed{
+      opacity:.55;
+      color:#64748b !important;
+      text-decoration: line-through;
+      text-decoration-thickness: 6px;
+      text-decoration-color: rgba(239,68,68,.85);
+    }
+    .ansBox{
+      width:5rem;height:4.25rem;text-align:center;font-size:2rem;font-weight:800;
+      border-width:4px;border-radius:1.25rem;outline:none;background:#fff;
+    }
+    .ansBox:focus{box-shadow:0 0 0 6px rgba(236,72,153,.25)}
+    .borrowBox{
+      width:3.25rem;height:2.75rem;text-align:center;font-size:1.35rem;font-weight:800;
+      border-width:3px;border-radius:.9rem;outline:none;background:#fff;opacity:.95;
+    }
+    .borrowBox:focus{box-shadow:0 0 0 5px rgba(139,92,246,.22)}
+    .newBox{
+      width:3.9rem;height:2.75rem;text-align:center;font-size:1.35rem;font-weight:800;
+      border-width:3px;border-radius:.9rem;outline:none;background:#fff;
+    }
+    .newWide{
+      width:4.8rem; /* لاستيعاب ١٠–١٩ */
+    }
+    .newBox:focus{box-shadow:0 0 0 5px rgba(34,197,94,.22)}
+    .btn{border-radius:18px;font-weight:800;padding:14px 18px}
+    .shake{animation:shake .35s ease-in-out}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(6px)}50%{transform:translateX(-6px)}75%{transform:translateX(4px)}}
+    .pop{animation:pop .35s ease-in-out}
+    @keyframes pop{0%{transform:scale(.98)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+    @media(max-width:640px){
+      .box{min-width:72px;min-height:72px;font-size:38px}
+      .ansBox{width:4.25rem;height:3.75rem;font-size:1.75rem}
+      .borrowBox{width:2.8rem;height:2.4rem;font-size:1.2rem}
+      .newBox{width:3.2rem;height:2.4rem;font-size:1.1rem}
+      .newWide{width:4.1rem}
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-amber-50 via-white to-emerald-50">
+  <div class="max-w-5xl mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="bg-white/90 backdrop-blur rounded-3xl card p-6 border border-emerald-100">
+      <div class="flex flex-col gap-2 items-center text-center">
+        <div class="text-2xl md:text-3xl font-extrabold text-slate-800">طَرْحُ الأَعْدَادِ المُكَوَّنَةِ مِنْ رَقْمَيْنِ</div>
+
+        <div class="mt-1 grid md:grid-cols-2 gap-3 w-full max-w-3xl">
+          <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+            <div class="font-extrabold text-emerald-800">فِكْرَةُ الدَّرْسِ</div>
+            <div class="text-slate-700 font-bold mt-1">أطرحُ أعدادًا مكوَّنةً من رقمين.</div>
+          </div>
+          <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
+            <div class="font-extrabold text-amber-800">المُفْرَدَات</div>
+            <div class="text-slate-700 font-bold mt-1">الفَرْق: ناتج الطرح.</div>
+          </div>
+        </div>
+
+        <div class="text-sm md:text-base text-slate-600 mt-2">
+          جديد ✨: أضفنا مربعات <b>للعدد بعد الاستلاف</b> + يمكنك <b>شطب الرقم القديم</b> بالضغط عليه.
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="mt-6 flex flex-wrap gap-2 justify-center">
+        <button id="tab-learn" class="btn bg-pink-600 text-white">تعلم</button>
+        <button id="tab-practice" class="btn bg-white text-slate-700 border-2 border-pink-200">تدرب</button>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <!-- Learn -->
+      <section id="section-learn" class="bg-white rounded-3xl card p-6 border border-emerald-100">
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="rounded-2xl p-4 bg-pink-50 border border-pink-100">
+            <div class="font-extrabold text-lg text-slate-800 mb-2">١) أبدأ بالآحاد</div>
+            <div class="text-slate-700 leading-7">
+              إذا كانت الآحاد العلوية أصغر من الآحاد السفلية، <b>أستلف ١</b> من العشرات.
+            </div>
+          </div>
+          <div class="rounded-2xl p-4 bg-purple-50 border border-purple-100">
+            <div class="font-extrabold text-lg text-slate-800 mb-2">٢) بعد الاستلاف</div>
+            <div class="text-slate-700 leading-7">
+              <b>العشرات تقل ١</b>، و<b>الآحاد تزيد ١٠</b>. اكتبي العدد الجديد في المربعات الخضراء أعلى المسألة.
+            </div>
+          </div>
+          <div class="rounded-2xl p-4 bg-amber-50 border border-amber-100">
+            <div class="font-extrabold text-lg text-slate-800 mb-2">٣) اشطبي الرقم القديم</div>
+            <div class="text-slate-700 leading-7">
+              اضغطي على رقم العشرات أو الآحاد في العدد العلوي ليظهر <b>شطب أحمر</b> ويتضح التغيير.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Practice -->
+      <section id="section-practice" class="hidden bg-white rounded-3xl card p-6 border border-emerald-100">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div class="font-extrabold text-xl text-slate-800">تدريب: اكتبي الفرق في المربعات</div>
+            <div class="text-slate-600">إذا احتجتِ استلافًا اكتبي (١) في مربع الاستلاف، وسيظهر العدد الجديد بالأخضر.</div>
+          </div>
+          <div class="rounded-2xl bg-slate-50 border border-slate-200 px-4 py-3">
+            <div class="font-bold text-slate-700">النتيجة</div>
+            <div class="text-slate-700">⭐ <span id="score">٠</span> / <span id="total">٠</span></div>
+          </div>
+        </div>
+
+        <div class="mt-6 grid lg:grid-cols-2 gap-6 items-start">
+          <!-- Problem -->
+          <div class="rounded-3xl border border-pink-100 bg-gradient-to-b from-white to-pink-50 p-5">
+            <div class="flex items-center justify-between mb-3">
+              <div class="font-extrabold text-slate-800">المسألة</div>
+              <div class="text-sm text-slate-500">اضغطي على الرقم لشطبه</div>
+            </div>
+
+            <div id="practiceProblem" class="flex flex-col items-center gap-4"></div>
+
+            <!-- Answer boxes -->
+            <div class="mt-5 flex flex-col items-center gap-3">
+              <div class="text-2xl font-extrabold text-slate-800">= ؟</div>
+              <div class="flex items-center justify-center gap-4" dir="ltr">
+                <div class="text-center">
+                  <div class="text-sm font-bold text-gray-500 mb-1">عشرات</div>
+                  <input id="ans-t" class="ansBox border-pink-500 text-slate-800" inputmode="numeric" maxlength="1" />
+                </div>
+                <div class="text-center">
+                  <div class="text-sm font-bold text-gray-500 mb-1">آحاد</div>
+                  <input id="ans-o" class="ansBox border-pink-500 text-slate-800" inputmode="numeric" maxlength="1" />
+                </div>
+              </div>
+              <div class="text-sm text-slate-500">اكتبي كل رقم في مربعه</div>
+            </div>
+
+            <div class="mt-5 flex gap-3 justify-center">
+              <button id="btnCheck" class="btn bg-emerald-600 text-white w-44">تحقق ✅</button>
+              <button id="btnSolve" class="btn bg-white border-2 border-purple-200 text-slate-700 w-44">اعرض الحل</button>
+            </div>
+
+            <div class="mt-4 flex gap-3 justify-center">
+              <button id="btnNewQ" class="btn bg-purple-600 text-white w-44">سؤال جديد</button>
+              <select id="mode" class="btn bg-white border-2 border-slate-200 text-slate-700 w-44">
+                <option value="mix">عشوائي</option>
+                <option value="borrow">مع إعادة تجميع</option>
+                <option value="noborrow">بدون إعادة تجميع</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Feedback -->
+          <div class="rounded-3xl border border-slate-200 bg-white p-5">
+            <div class="font-extrabold text-slate-800 mb-2">التغذية الراجعة والشرح</div>
+            <div id="feedback" class="text-slate-700 leading-7">
+              إذا استلفتِ اكتبي ١ في مربع الاستلاف، ثم اكتبي العدد الجديد بالأخضر (اختياري)، ثم احسبي الفرق.
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-8 text-center text-slate-600">
+      <div class="bg-white/80 inline-block px-4 py-3 rounded-2xl border border-slate-200">
+        <span class="font-bold">أ/ فاطمة هزازي</span> • ملتقى معلمي ومعلمات الرياضيات • الملتقى التفاعلي
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Arabic helpers
+    const ar = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+    const toArabic = (n) => String(Math.trunc(n)).split('').map(ch=>{
+      const d = ch.charCodeAt(0)-48;
+      return (d>=0 && d<=9) ? ar[d] : ch;
+    }).join('');
+    const normDigits = (str) => {
+      if (str == null) return "";
+      const s = String(str).trim();
+      const map = {'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9','۰':'0','۱':'1','۲':'2','۳':'3','۴':'4','۵':'5','۶':'6','۷':'7','۸':'8','۹':'9'};
+      return s.split('').map(ch => map[ch] ?? ch).join('');
+    };
+    const randInt=(min,max)=>Math.floor(Math.random()*(max-min+1))+min;
+
+    // Tabs
+    const tabs = [
+      {btn:'tab-learn', sec:'section-learn'},
+      {btn:'tab-practice', sec:'section-practice'},
+    ];
+    function setTab(active){
+      tabs.forEach(t=>{
+        const b=document.getElementById(t.btn);
+        const s=document.getElementById(t.sec);
+        const on=t.btn===active;
+        s.classList.toggle('hidden', !on);
+        b.className = on ? 'btn bg-pink-600 text-white' : 'btn bg-white text-slate-700 border-2 border-pink-200';
+      });
+    }
+    document.getElementById('tab-learn').onclick=()=>setTab('tab-learn');
+    document.getElementById('tab-practice').onclick=()=>setTab('tab-practice');
+
+    function gen2(mode='mix'){
+      const wantBorrow = (mode==='borrow') ? true : (mode==='noborrow') ? false : Math.random()<0.6;
+      for(let attempt=0; attempt<500; attempt++){
+        let t1 = randInt(1,9);
+        let o1 = randInt(0,9);
+        let t2 = randInt(0,t1);
+        let o2;
+
+        if (wantBorrow){
+          if (o1===9) continue;
+          o2 = randInt(o1+1, 9);
+          if (t2 > t1-1) t2 = randInt(0, t1-1);
+        } else {
+          o2 = randInt(0, o1);
+        }
+
+        const top = t1*10 + o1;
+        const bot = t2*10 + o2;
+        if (top < bot) continue;
+
+        if (!wantBorrow && o1 < o2) continue;
+
+        const ans = top - bot;
+        return {t1,o1,t2,o2, top, bot, ans};
+      }
+      return {t1:5,o1:2,t2:1,o2:7, top:52, bot:17, ans:35};
+    }
+
+    function renderVertical(targetId, q){
+      const el=document.getElementById(targetId);
+      el.innerHTML = `
+        <div class="flex flex-col items-center gap-4">
+          <!-- Row 1: Borrow + New digits -->
+          <div class="grid grid-cols-2 gap-6 items-end justify-items-center" dir="ltr">
+            <div class="text-center">
+              <div class="text-sm font-bold text-gray-500 mb-1">استلاف من العشرات</div>
+              <input id="borrow-t" class="borrowBox border-purple-500 text-slate-800" inputmode="numeric" maxlength="1" placeholder="" />
+            </div>
+            <div class="text-center">
+              <div class="text-sm font-bold text-emerald-700 mb-1">الآحاد بعد الاستلاف</div>
+              <input id="new-o" class="newBox newWide border-emerald-500 text-slate-800" inputmode="numeric" maxlength="2" placeholder="" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-6 items-end justify-items-center" dir="ltr">
+            <div class="text-center">
+              <div class="text-sm font-bold text-emerald-700 mb-1">العشرات بعد الاستلاف</div>
+              <input id="new-t" class="newBox border-emerald-500 text-slate-800" inputmode="numeric" maxlength="1" placeholder="" />
+            </div>
+            <div class="text-center">
+              <div class="text-sm font-bold text-gray-500 mb-1"> </div>
+              <div class="text-gray-400 text-sm"> </div>
+            </div>
+          </div>
+
+          <!-- Top number (clickable to cross out) -->
+          <div class="grid grid-cols-2 gap-6 items-center justify-items-center" dir="ltr">
+            <div class="text-center">
+              <div class="text-sm font-bold text-gray-500">عشرات</div>
+              <div id="topT" class="box clickable border-pink-500 text-slate-800">${toArabic(q.t1)}</div>
+            </div>
+            <div class="text-center">
+              <div class="text-sm font-bold text-gray-500">آحاد</div>
+              <div id="topO" class="box clickable border-pink-500 text-slate-800">${toArabic(q.o1)}</div>
+            </div>
+          </div>
+
+          <!-- Bottom number -->
+          <div class="grid grid-cols-2 gap-6 items-center justify-items-center" dir="ltr">
+            <div class="text-center">
+              <div class="text-sm font-bold text-gray-500">عشرات</div>
+              <div class="box border-pink-500 text-slate-800">${toArabic(q.t2)}</div>
+            </div>
+            <div class="text-center">
+              <div class="text-sm font-bold text-gray-500">آحاد</div>
+              <div class="box border-pink-500 text-slate-800">${toArabic(q.o2)}</div>
+            </div>
+          </div>
+
+          <div class="text-6xl font-extrabold text-pink-600">−</div>
+          <div class="w-full h-1 rounded-full bg-pink-500"></div>
+
+          <div class="text-xs text-slate-500 text-center">
+            تلميح: اكتبي ١ في الاستلاف إذا كانت ${toArabic(q.o1)} أصغر من ${toArabic(q.o2)}.
+          </div>
+        </div>
+      `;
+
+      // Behaviors
+      const borrow = document.getElementById('borrow-t');
+      const newT = document.getElementById('new-t');
+      const newO = document.getElementById('new-o');
+      const topT = document.getElementById('topT');
+      const topO = document.getElementById('topO');
+
+      // Click to cross out
+      topT.onclick = ()=> topT.classList.toggle('crossed');
+      topO.onclick = ()=> topO.classList.toggle('crossed');
+
+      // Normalize numeric inputs (support Arabic digits)
+      const normalizeInput = (el, maxLen=1)=>{
+        const raw = normDigits(el.value).replace(/\D/g,'');
+        el.value = raw.slice(-maxLen);
+      };
+
+      borrow.addEventListener('input', ()=>{
+        normalizeInput(borrow,1);
+
+        if (borrow.value === '1'){
+          // Auto fill adjusted digits (helpful)
+          const adjT = q.t1 - 1;
+          const adjO = q.o1 + 10;
+          newT.value = String(adjT);
+          newO.value = String(adjO);
+          // Auto cross out original digits
+          topT.classList.add('crossed');
+          topO.classList.add('crossed');
+        } else {
+          newT.value = '';
+          newO.value = '';
+          topT.classList.remove('crossed');
+          topO.classList.remove('crossed');
+        }
+      });
+
+      newT.addEventListener('input', ()=>normalizeInput(newT,1));
+      newO.addEventListener('input', ()=>normalizeInput(newO,2));
+    }
+
+    function steps2(q){
+      let t1=q.t1, o1=q.o1;
+      const t2=q.t2, o2=q.o2;
+
+      let html = `<div class="text-right leading-8 text-slate-700">`;
+
+      if (o1 < o2){
+        html += `<div class="mb-2"><b>الخطوة ١:</b> الآحاد ${toArabic(o1)} أصغر من ${toArabic(o2)}؛ نستلف ١ من العشرات.</div>`;
+        o1 += 10;
+        t1 -= 1;
+        html += `<div class="mb-2"><b>بعد الاستلاف:</b> الآحاد تصبح ${toArabic(o1)} والعشرات تصبح ${toArabic(t1)}.</div>`;
+      } else {
+        html += `<div class="mb-2"><b>الخطوة ١:</b> نطرح الآحاد: <span dir="ltr">${toArabic(o1)} − ${toArabic(o2)} = ${toArabic(o1-o2)}</span></div>`;
+      }
+      const rO = o1 - o2;
+
+      html += `<div class="mb-2"><b>الخطوة ٢:</b> نطرح العشرات: <span dir="ltr">${toArabic(t1)} − ${toArabic(t2)} = ${toArabic(t1-t2)}</span></div>`;
+      const rT = t1 - t2;
+
+      html += `<div class="mt-3 p-3 rounded-2xl bg-emerald-50 border border-emerald-200 font-extrabold text-emerald-800">
+        الفَرْق (الناتج): <span dir="ltr">${toArabic(rT)}${toArabic(rO)}</span>
+      </div>`;
+
+      html += `</div>`;
+      return html;
+    }
+
+    // Practice state
+    let state = { q: gen2('mix'), score:0, total:0 };
+
+    function updateScore(){
+      document.getElementById('score').textContent = toArabic(state.score);
+      document.getElementById('total').textContent = toArabic(state.total);
+    }
+    updateScore();
+
+    function setFeedback(html, kind){
+      const box = document.getElementById('feedback');
+      box.classList.remove('shake','pop');
+      void box.offsetWidth;
+      box.classList.add(kind==='good' ? 'pop' : 'shake');
+      box.innerHTML = html;
+    }
+
+    function clearAnswer(){
+      document.getElementById('ans-t').value='';
+      document.getElementById('ans-o').value='';
+    }
+
+    function attachAnswerBehaviors(){
+      const ids=['ans-t','ans-o'];
+      ids.forEach((id, idx)=>{
+        const el=document.getElementById(id);
+        el.addEventListener('input', ()=>{
+          const raw = normDigits(el.value).replace(/\D/g,'');
+          el.value = raw.slice(-1);
+          if (el.value && idx<ids.length-1) document.getElementById(ids[idx+1]).focus();
+        });
+        el.addEventListener('keydown', (e)=>{
+          if (e.key==='Backspace' && !el.value && idx>0) document.getElementById(ids[idx-1]).focus();
+          if (e.key==='Enter') checkAnswer();
+        });
+      });
+    }
+
+    function renderPractice(){
+      renderVertical('practiceProblem', state.q);
+      attachAnswerBehaviors();
+      document.getElementById('ans-t').focus();
+    }
+    renderPractice();
+
+    function readAnswer(){
+      const t=normDigits(document.getElementById('ans-t').value).replace(/\D/g,'').slice(-1);
+      const o=normDigits(document.getElementById('ans-o').value).replace(/\D/g,'').slice(-1);
+      if(t===''||o==='') return {ok:false, value:null};
+      return {ok:true, value: parseInt(`${t}${o}`,10)};
+    }
+
+    function checkAnswer(){
+      const ans = readAnswer();
+      if (!ans.ok){
+        setFeedback('⚠️ اكتبي الرقمين في مربعي (عشرات/آحاد).', 'bad');
+        return;
+      }
+      state.total += 1;
+      const correct = ans.value === state.q.ans;
+      if (correct) state.score += 1;
+      updateScore();
+
+      if (correct){
+        setFeedback(`<div class="font-extrabold text-emerald-700 text-lg">أحسنتِ! إجابة صحيحة 🎉</div>
+          <div class="mt-2"><b>الفَرْق:</b> ${toArabic(state.q.ans)}</div>`, 'good');
+      } else {
+        setFeedback(`<div class="font-extrabold text-rose-700 text-lg">حاولي مرة أخرى 💡</div>
+          <div class="mt-2"><b>إجابتك:</b> ${toArabic(ans.value)}</div>
+          <div><b>الإجابة الصحيحة:</b> ${toArabic(state.q.ans)}</div>
+          <div class="mt-3 p-4 rounded-2xl bg-amber-50 border border-amber-200">${steps2(state.q)}</div>`, 'bad');
+      }
+    }
+
+    function showSolution(){
+      setFeedback(`<div class="font-extrabold text-slate-800 mb-2">الحل خطوة بخطوة</div>${steps2(state.q)}`, 'good');
+    }
+
+    function newQuestion(){
+      const mode = document.getElementById('mode').value;
+      state.q = gen2(mode);
+      clearAnswer();
+      renderPractice();
+      setFeedback('اكتبي الفَرْق ثم اضغطي <b>تحقق</b>. إذا احتجتِ استلافًا اكتبي ١ في مربع الاستلاف.', 'good');
+    }
+
+    document.getElementById('btnCheck').onclick = checkAnswer;
+    document.getElementById('btnSolve').onclick = showSolution;
+    document.getElementById('btnNewQ').onclick = newQuestion;
+    document.getElementById('mode').onchange = newQuestion;
+
+    // Start on Learn
+    setTab('tab-learn');
+  </script>
+</body>
+</html>
